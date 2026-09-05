@@ -384,6 +384,231 @@
     transition: opacity 2s ease;
     opacity: 0.12;
   }
+
+  /* --- staring contest game --- */
+  .stare-btn {
+    position: fixed;
+    bottom: 8%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 50;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 1rem;
+    letter-spacing: 0.03em;
+    color: #ffdede;
+    background: linear-gradient(90deg, rgba(90,0,0,0.55), rgba(160,0,0,0.55));
+    border: 1px solid rgba(255,80,80,0.4);
+    border-radius: 4px;
+    padding: 0.7rem 1.8rem;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1.8s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 0 30px rgba(200,0,0,0.25);
+  }
+  .stare-btn.show {
+    opacity: 1;
+    pointer-events: auto;
+    animation: dreadCard 4s ease-in-out infinite;
+  }
+  .stare-btn:hover {
+    transform: translateX(-50%) translateY(-1px);
+    box-shadow: 0 6px 28px rgba(255,0,0,0.5);
+  }
+
+  .stare-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: #000;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.4rem;
+  }
+  .stare-overlay.active { display: flex; }
+
+  /* heaven.png slowly gives way to hell.png as the stare approaches
+     its halfway point (~30s into the full 60s escalation) */
+  .stare-bg {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    overflow: hidden;
+  }
+  .stare-bg-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(1.1) contrast(1.05);
+  }
+  .stare-bg-heaven { opacity: 1; }
+  .stare-bg-hell { opacity: 0; }
+
+  .stare-vignette {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: radial-gradient(circle, rgba(25,0,0,0) 0%, rgba(0,0,0,1) 72%);
+  }
+
+  .stare-timer {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 1.6rem;
+    color: #ff3535;
+    text-shadow: 0 0 18px rgba(255,0,0,0.5);
+    letter-spacing: 0.02em;
+  }
+
+  .stare-eye-wrap {
+    position: relative;
+    width: min(46vmin, 340px);
+    aspect-ratio: 1;
+    cursor: pointer;
+    user-select: none;
+    touch-action: none;
+  }
+  .stare-eye-glow {
+    position: absolute;
+    inset: -14%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(200,0,0,0.5), transparent 70%);
+    filter: blur(24px);
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  .stare-eye-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    display: block;
+    filter: contrast(1.3) saturate(1.4) brightness(0.95);
+    box-shadow: 0 0 0 3px rgba(255,0,0,0.35), 0 0 60px rgba(255,0,0,0.4);
+  }
+  .stare-eye-wrap.holding .stare-eye-img {
+    /* Scale, contrast, and shake are now driven per-frame from JS as the
+       hold escalates, so no baseline animation is declared here. */
+  }
+
+  /* image1.png slowly rises out of image3.png over the same escalation
+     that turns heaven.png into hell.png behind it */
+  .stare-eye-img-shift {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .stare-explosion {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 3;
+    overflow: visible;
+  }
+
+  .stare-falling {
+    position: absolute;
+    top: -25%;
+    left: 50%;
+    width: min(20vmin, 150px);
+    aspect-ratio: 1;
+    transform: translateX(-50%);
+    border-radius: 50%;
+    object-fit: cover;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 2;
+    filter: contrast(1.2) saturate(1.3);
+  }
+
+  .stare-instructions {
+    font-family: 'Work Sans', sans-serif;
+    font-weight: 300;
+    font-size: 0.85rem;
+    letter-spacing: 0.03em;
+    color: rgba(255,255,255,0.45);
+    text-align: center;
+    max-width: 320px;
+  }
+
+  .stare-best {
+    font-family: 'Work Sans', sans-serif;
+    font-size: 0.75rem;
+    color: rgba(255,80,80,0.6);
+    letter-spacing: 0.02em;
+    min-height: 1em;
+  }
+
+  .stare-jumpscare {
+    position: fixed;
+    inset: 0;
+    z-index: 210;
+    display: none;
+    background: #000;
+  }
+  .stare-jumpscare.active { display: block; }
+  .stare-jumpscare img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: contrast(1.9) saturate(2.1) brightness(1.5);
+    animation: jumpZoom 0.35s ease-out forwards;
+  }
+  @keyframes jumpZoom {
+    0%   { transform: scale(0.75); }
+    100% { transform: scale(1.35); }
+  }
+
+  .stare-result {
+    position: absolute;
+    z-index: 220;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.2rem;
+    text-align: center;
+    max-width: 380px;
+    padding: 0 2rem;
+  }
+  .stare-result.active { display: flex; }
+  .stare-result p {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 1.15rem;
+    line-height: 1.5;
+    color: #ff3535;
+    text-shadow: 0 0 18px rgba(255,0,0,0.5);
+  }
+  .stare-result-buttons {
+    display: flex;
+    gap: 1rem;
+  }
+  .stare-result button {
+    font-family: 'Work Sans', sans-serif;
+    font-size: 0.85rem;
+    color: #fff;
+    background: linear-gradient(90deg, #7a0000, #d40000);
+    border: 1px solid rgba(255,80,80,0.5);
+    border-radius: 4px;
+    padding: 0.6rem 1.5rem;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .stare-result button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 28px rgba(255,0,0,0.5);
+  }
+  .stare-result button.secondary {
+    background: linear-gradient(90deg, #1a1a1a, #333);
+    border-color: rgba(255,255,255,0.2);
+  }
 </style>
 </head>
 <body>
@@ -397,6 +622,9 @@
 
   <img class="heaven-bg" id="heavenBg" src="heaven.png" alt="" onerror="this.src=window.__fallbackHeaven">
   <audio id="bgAudio" src="audio.mp3" preload="auto"></audio>
+  <audio id="stareAmbience" src="creepyambience.mp3" preload="auto" loop></audio>
+  <audio id="jumpscareAudio" src="jumpscare.mp3" preload="auto"></audio>
+  <audio id="jumpscareAudio" src="jumpscare.mp3" preload="auto"></audio>
 
   <div class="sky"></div>
   <div class="grain"></div>
@@ -436,6 +664,38 @@
     <div class="finale" id="finale">
       <div class="finale-glow"></div>
       <img class="finale-img" id="finaleImg" src="image3.png" alt="what remains" onerror="this.src=window.__fallbackFinale">
+    </div>
+  </div>
+
+  <button class="stare-btn" id="stareBtn" type="button">stare back</button>
+
+  <div class="stare-overlay" id="stareOverlay">
+    <div class="stare-bg" id="stareBg">
+      <img class="stare-bg-img stare-bg-heaven" id="stareBgHeaven" src="heaven.png" alt="" onerror="this.src=window.__fallbackHeaven">
+      <img class="stare-bg-img stare-bg-hell" id="stareBgHell" src="hell.png" alt="" onerror="this.src=window.__fallbackHell">
+    </div>
+    <div class="stare-vignette" id="stareVignette"></div>
+    <div class="stare-timer" id="stareTimer">0.0s</div>
+    <div class="stare-eye-wrap" id="stareEyeWrap">
+      <div class="stare-eye-glow"></div>
+      <img class="stare-eye-img" id="stareEyeImg" src="image3.png" alt="the eye" onerror="this.src=window.__fallbackFinale">
+      <img class="stare-eye-img stare-eye-img-shift" id="stareEyeImgShift" src="image1.png" alt="" onerror="this.src=window.__fallbackCenter">
+    </div>
+    <div class="stare-explosion" id="stareExplosion"></div>
+    <img class="stare-falling" id="stareFalling" src="image1.png" alt="" onerror="this.src=window.__fallbackCenter">
+    <p class="stare-instructions">Press and hold. Don't let go. Don't look away.</p>
+    <p class="stare-best" id="stareBest"></p>
+
+    <div class="stare-jumpscare" id="stareJumpscare">
+      <img id="stareJumpscareImg" src="image3.png" alt="" onerror="this.src=window.__fallbackFinale">
+    </div>
+
+    <div class="stare-result" id="stareResult">
+      <p id="stareResultText"></p>
+      <div class="stare-result-buttons">
+        <button id="stareRetryBtn" type="button">try again</button>
+        <button id="stareCloseBtn" type="button" class="secondary">leave</button>
+      </div>
     </div>
   </div>
 
@@ -515,6 +775,9 @@
           heavenBgEl.classList.add('on');
           bgAudio.currentTime = 0;
           bgAudio.play().catch(() => {});
+
+          // Give the calm a moment to settle before offering the game.
+          setTimeout(() => stareBtn.classList.add('show'), 3000);
         }, 1600);
       }, 550);
     }
@@ -779,6 +1042,314 @@
       startExperience();
     });
 
+    // --- staring contest game ---
+    // Hold the eye. Let go, look away, or leave the tab, and it "sees" you.
+    // The longer you hold, the worse it gets: creeping visual distortion,
+    // a low ambience that fades in, small things starting to come apart
+    // after 30s, and total collapse — followed by a refresh — at 60s.
+    const stareBtn = document.getElementById('stareBtn');
+    const stareOverlay = document.getElementById('stareOverlay');
+    const stareBgHeaven = document.getElementById('stareBgHeaven');
+    const stareBgHell = document.getElementById('stareBgHell');
+    const stareVignette = document.getElementById('stareVignette');
+    const stareEyeWrap = document.getElementById('stareEyeWrap');
+    const stareEyeImg = document.getElementById('stareEyeImg');
+    const stareEyeImgShift = document.getElementById('stareEyeImgShift');
+    const stareExplosionEl = document.getElementById('stareExplosion');
+    const stareFallingEl = document.getElementById('stareFalling');
+    const stareTimerEl = document.getElementById('stareTimer');
+    const stareBestEl = document.getElementById('stareBest');
+    const stareJumpscare = document.getElementById('stareJumpscare');
+    const stareResult = document.getElementById('stareResult');
+    const stareResultText = document.getElementById('stareResultText');
+    const stareRetryBtn = document.getElementById('stareRetryBtn');
+    const stareCloseBtn = document.getElementById('stareCloseBtn');
+    const stareAmbienceAudio = document.getElementById('stareAmbience');
+    const jumpscareAudio = document.getElementById('jumpscareAudio');
+
+    let stareActive = false;
+    let stareStartTime = 0;
+    let stareRAF = null;
+    let stareFlickerTimeout = null;
+    let stareExplodeTimeout = null;
+    let stareFlickerUntil = 0;
+    let stareAmbienceStarted = false;
+    let stareSlowExplosionStarted = false;
+    let stareFinalTriggered = false;
+    let stareBestTime = parseFloat(localStorage.getItem('stareBestTime') || '0');
+
+    function playJumpscareSound() {
+      try {
+        jumpscareAudio.currentTime = 0;
+        jumpscareAudio.play().catch(() => {});
+      } catch (e) {
+        // Audio unavailable — silently skip.
+      }
+    }
+
+    function stopHeavenAmbienceIfPlaying() {
+      if (!bgAudio.paused) {
+        bgAudio.pause();
+      }
+    }
+
+    function applyStareEscalation(elapsed) {
+      // dread climbs from 0 to 1 across the full minute, driving every
+      // creepy effect together so they build in lockstep.
+      const dread = Math.min(elapsed / 60, 1);
+      const flickering = performance.now() < stareFlickerUntil;
+
+      const scale = 1 + dread * 0.28 + Math.sin(elapsed * 2) * 0.015 + (flickering ? 0.08 : 0);
+      const contrast = 1.3 + dread * 0.9 + (flickering ? 0.7 : 0);
+      const saturate = 1.4 + dread * 0.7 + (flickering ? 0.4 : 0);
+      const brightness = 0.95 - dread * 0.22 + (flickering ? 0.55 : 0);
+      stareEyeImg.style.transform = `scale(${scale})`;
+      stareEyeImg.style.filter = `contrast(${contrast}) saturate(${saturate}) brightness(${brightness})`;
+      stareEyeImgShift.style.transform = `scale(${scale})`;
+      stareEyeImgShift.style.filter = `contrast(${contrast}) saturate(${saturate}) brightness(${brightness})`;
+
+      // heaven.png -> hell.png and image3.png -> image1.png both complete
+      // their crossfade by the halfway point (dread 0.5, ~30s in), then hold.
+      const shift = Math.min(dread / 0.5, 1);
+      stareBgHell.style.opacity = shift;
+      stareEyeImgShift.style.opacity = shift;
+
+      // The dark closes in around the eye the longer you hold.
+      stareVignette.style.background =
+        `radial-gradient(circle, rgba(25,0,0,${dread * 0.55}) 0%, rgba(0,0,0,1) ${72 - dread * 32}%)`;
+
+      // A faint tremor once things start to feel unstable, worsening from there.
+      if (dread > 0.15) {
+        const jitter = (dread - 0.15) * 9;
+        const jx = (Math.random() - 0.5) * jitter;
+        const jy = (Math.random() - 0.5) * jitter;
+        stareEyeWrap.style.transform = `translate(${jx}px, ${jy}px)`;
+      }
+
+      stareTimerEl.style.textShadow = `0 0 ${18 + dread * 40}px rgba(255,0,0,${0.5 + dread * 0.5})`;
+
+      stareFallingEl.style.top = `${-25 + dread * 95}%`;
+      stareFallingEl.style.opacity = Math.min(dread * 2, 1);
+    }
+
+    function updateStareTimer() {
+      if (!stareActive) return;
+      const elapsed = (performance.now() - stareStartTime) / 1000;
+      stareTimerEl.textContent = elapsed.toFixed(1) + 's';
+      applyStareEscalation(elapsed);
+
+      if (elapsed >= 5 && !stareAmbienceStarted) {
+        stareAmbienceStarted = true;
+        startStareAmbienceFade();
+      }
+      if (elapsed >= 30 && !stareSlowExplosionStarted) {
+        stareSlowExplosionStarted = true;
+        scheduleStareShard();
+      }
+      if (elapsed >= 60 && !stareFinalTriggered) {
+        stareFinalTriggered = true;
+        triggerStareFinalExplosion();
+        return;
+      }
+
+      stareRAF = requestAnimationFrame(updateStareTimer);
+    }
+
+    // Ambience starts a few seconds in and fades up slowly rather than
+    // snapping to full volume.
+    function startStareAmbienceFade() {
+      stareAmbienceAudio.volume = 0;
+      stareAmbienceAudio.currentTime = 0;
+      stareAmbienceAudio.play().catch(() => {});
+      const fadeStart = performance.now();
+      const fadeMs = 7000;
+      (function fadeStep() {
+        if (!stareActive) return;
+        const t = Math.min((performance.now() - fadeStart) / fadeMs, 1);
+        stareAmbienceAudio.volume = t * 0.6;
+        if (t < 1) requestAnimationFrame(fadeStep);
+      })();
+    }
+
+    // Flicker frequency tightens the longer you've been holding.
+    function scheduleStareFlicker() {
+      const elapsed = (performance.now() - stareStartTime) / 1000;
+      const base = Math.max(1500 - elapsed * 18, 300);
+      const delay = base + Math.random() * base;
+      stareFlickerTimeout = setTimeout(() => {
+        if (!stareActive) return;
+        stareFlickerUntil = performance.now() + 120 + Math.random() * 100;
+        if (elapsed > 15) {
+          document.body.classList.add('shake');
+          setTimeout(() => document.body.classList.remove('shake'), 500);
+        }
+        scheduleStareFlicker();
+      }, delay);
+    }
+
+    // From 30s to 60s, small shards start drifting off the eye, getting
+    // bigger, faster, and more frequent as the minute runs out.
+    function spawnStareShard(elapsed) {
+      const progress = Math.min(Math.max((elapsed - 30) / 30, 0), 1);
+      const colors = ['#ff5a1f', '#ffcc4d', '#ff2fb0', '#a30f0f'];
+      const shard = document.createElement('div');
+      shard.className = 'shard';
+      const angle = Math.random() * 360;
+      const dist = 60 + progress * 260 + Math.random() * 80;
+      const dur = 0.9 - progress * 0.4 + Math.random() * 0.3;
+      const size = 4 + progress * 14 + Math.random() * 8;
+      const rot = (Math.random() > 0.5 ? 1 : -1) * (180 + Math.random() * 360);
+      shard.style.setProperty('--w', size + 'px');
+      shard.style.setProperty('--h', size + 'px');
+      shard.style.setProperty('--c', colors[Math.floor(Math.random() * colors.length)]);
+      shard.style.setProperty('--dur', dur + 's');
+      shard.style.setProperty('--rot', rot + 'deg');
+      const rad = angle * Math.PI / 180;
+      const dx = Math.cos(rad) * dist;
+      const dy = Math.sin(rad) * dist;
+      shard.style.setProperty('--dist', `${dx}px, ${dy}px`);
+      stareExplosionEl.appendChild(shard);
+      setTimeout(() => shard.remove(), (dur + 0.2) * 1000);
+    }
+
+    function scheduleStareShard() {
+      if (!stareActive) return;
+      const elapsed = (performance.now() - stareStartTime) / 1000;
+      if (elapsed >= 60) return;
+      spawnStareShard(elapsed);
+      const progress = Math.min((elapsed - 30) / 30, 1);
+      const delay = 700 - progress * 500;
+      stareExplodeTimeout = setTimeout(scheduleStareShard, Math.max(delay, 150));
+    }
+
+    function stareMoveCheck(e) {
+      if (!stareActive) return;
+      const rect = stareEyeWrap.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const point = e.touches ? e.touches[0] : e;
+      const dist = Math.hypot(point.clientX - cx, point.clientY - cy);
+      if (dist > rect.width * 1.3) endStareLose();
+    }
+
+    // Shared teardown for the timers, listeners, and visual/audio state
+    // that build up over a hold — used whether the round ends in a loss,
+    // a full collapse, or the player just backs out.
+    function stareCleanupTimers() {
+      cancelAnimationFrame(stareRAF);
+      clearTimeout(stareFlickerTimeout);
+      clearTimeout(stareExplodeTimeout);
+      window.removeEventListener('mouseup', endStareLose);
+      window.removeEventListener('touchend', endStareLose);
+      window.removeEventListener('blur', endStareLose);
+      window.removeEventListener('mousemove', stareMoveCheck);
+      window.removeEventListener('touchmove', stareMoveCheck);
+      stareAmbienceAudio.pause();
+      stareAmbienceAudio.currentTime = 0;
+      stareAmbienceAudio.volume = 0;
+      stareAmbienceStarted = false;
+      stareSlowExplosionStarted = false;
+      stareFinalTriggered = false;
+      stareFlickerUntil = 0;
+      stareEyeWrap.classList.remove('holding');
+      stareEyeWrap.style.transform = '';
+      stareEyeImg.style.transform = '';
+      stareEyeImg.style.filter = '';
+      stareEyeImgShift.style.transform = '';
+      stareEyeImgShift.style.filter = '';
+      stareEyeImgShift.style.opacity = '';
+      stareBgHell.style.opacity = '';
+      stareVignette.style.background = '';
+      stareExplosionEl.innerHTML = '';
+      stareFallingEl.style.top = '';
+      stareFallingEl.style.opacity = '';
+    }
+
+    function openStareGame() {
+      stareCleanupTimers();
+      stareActive = false;
+      stareOverlay.classList.add('active');
+      stareResult.classList.remove('active');
+      stareJumpscare.classList.remove('active');
+      stareTimerEl.textContent = '0.0s';
+      stareBestEl.textContent = stareBestTime > 0 ? `longest so far: ${stareBestTime.toFixed(1)}s` : '';
+    }
+
+    function startStare(e) {
+      e.preventDefault();
+      if (stareActive) return;
+      stareActive = true;
+      stareStartTime = performance.now();
+      stareEyeWrap.classList.add('holding');
+      stareRAF = requestAnimationFrame(updateStareTimer);
+      scheduleStareFlicker();
+      window.addEventListener('mouseup', endStareLose);
+      window.addEventListener('touchend', endStareLose);
+      window.addEventListener('blur', endStareLose);
+      window.addEventListener('mousemove', stareMoveCheck);
+      window.addEventListener('touchmove', stareMoveCheck, { passive: true });
+    }
+
+    function endStareLose() {
+      if (!stareActive) return;
+      stareActive = false;
+      const survived = (performance.now() - stareStartTime) / 1000;
+      stareCleanupTimers();
+      triggerStareJumpscare(survived);
+    }
+
+    function triggerStareJumpscare(survived) {
+      stopHeavenAmbienceIfPlaying();
+      playJumpscareSound();
+      document.body.classList.add('shake');
+      setTimeout(() => document.body.classList.remove('shake'), 600);
+      stareJumpscare.classList.add('active');
+
+      const isBest = survived > stareBestTime;
+      if (isBest) {
+        stareBestTime = survived;
+        localStorage.setItem('stareBestTime', String(survived));
+      }
+
+      setTimeout(() => {
+        stareJumpscare.classList.remove('active');
+        stareResultText.textContent = isBest
+          ? `It saw you after ${survived.toFixed(1)}s. That's a new longest.`
+          : `It saw you after ${survived.toFixed(1)}s. Longest so far: ${stareBestTime.toFixed(1)}s.`;
+        stareResult.classList.add('active');
+      }, 850);
+    }
+
+    // A full minute of holding on: everything comes apart at once, then
+    // the page reloads to a clean slate.
+    function triggerStareFinalExplosion() {
+      stareActive = false;
+      stareCleanupTimers();
+      stopHeavenAmbienceIfPlaying();
+
+      playJumpscareSound();
+      document.body.classList.add('shake');
+      for (let i = 0; i < 14; i++) {
+        setTimeout(() => spawnStareShard(60), i * 30);
+      }
+      stareJumpscare.classList.add('active');
+
+      setTimeout(() => location.reload(), 1400);
+    }
+
+    function closeStareGame() {
+      stareActive = false;
+      stareCleanupTimers();
+      stopHeavenAmbienceIfPlaying();
+      stareOverlay.classList.remove('active');
+    }
+
+    stareBtn.addEventListener('click', openStareGame);
+    stareEyeWrap.addEventListener('mousedown', startStare);
+    stareEyeWrap.addEventListener('touchstart', startStare, { passive: false });
+    stareRetryBtn.addEventListener('click', openStareGame);
+    stareCloseBtn.addEventListener('click', closeStareGame);
+
     // Inline surreal placeholder art, used only if the real images aren't found yet.
     window.__fallbackCenter = "data:image/svg+xml," + encodeURIComponent(`
       <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'>
@@ -871,6 +1442,37 @@
           <ellipse cx='620' cy='400' rx='160' ry='42'/>
           <ellipse cx='540' cy='420' rx='110' ry='30'/>
           <ellipse cx='400' cy='460' rx='220' ry='36'/>
+        </g>
+      </svg>
+    `);
+
+    // Fallback hell backdrop — churning red-black sky with jagged rock
+    // silhouettes, used only until the real hell.png is placed next to
+    // this file.
+    window.__fallbackHell = "data:image/svg+xml," + encodeURIComponent(`
+      <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 500' preserveAspectRatio='xMidYMid slice'>
+        <defs>
+          <radialGradient id='hellsky' cx='50%' cy='65%' r='75%'>
+            <stop offset='0%' stop-color='#ff6a00'/>
+            <stop offset='35%' stop-color='#8a0000'/>
+            <stop offset='70%' stop-color='#2a0000'/>
+            <stop offset='100%' stop-color='#050000'/>
+          </radialGradient>
+          <linearGradient id='embers' x1='0' y1='1' x2='0' y2='0'>
+            <stop offset='0%' stop-color='#ff9a3d' stop-opacity='0.9'/>
+            <stop offset='100%' stop-color='#ff9a3d' stop-opacity='0'/>
+          </linearGradient>
+        </defs>
+        <rect width='800' height='500' fill='url(#hellsky)'/>
+        <g opacity='0.7'>
+          <polygon points='150,500 210,120 270,500' fill='url(#embers)'/>
+          <polygon points='420,500 470,60 530,500' fill='url(#embers)' opacity='0.7'/>
+          <polygon points='620,500 660,160 700,500' fill='url(#embers)' opacity='0.6'/>
+        </g>
+        <g fill='#0a0000'>
+          <polygon points='0,500 80,320 160,420 260,280 340,500'/>
+          <polygon points='340,500 420,300 520,440 620,260 700,500'/>
+          <polygon points='620,500 700,380 800,460 800,500'/>
         </g>
       </svg>
     `);
